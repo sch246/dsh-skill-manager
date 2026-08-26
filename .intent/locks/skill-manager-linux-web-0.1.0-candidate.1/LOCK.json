@@ -1,0 +1,87 @@
+{
+  "kind": "realization",
+  "id": "skill-manager-linux-web",
+  "revision": "0.1.0-candidate.1",
+  "status": "candidate",
+  "protocol": {
+    "id": "meta-intent",
+    "revision": "0.2"
+  },
+  "package": {
+    "id": "dsh-skill-manager",
+    "revision": "0.1.0-draft.1"
+  },
+  "state": {
+    "revision": "0.1.0-draft.1",
+    "entry": {
+      "path": "inputs/state/STATE.json",
+      "digest": "sha256:3389227890dcfc13e6e12359bf1b795c0b69e72c8493884fff1ed54348b22129"
+    },
+    "document": {
+      "path": "inputs/state/STATE.md",
+      "digest": "sha256:c7bb78dd0b8f5ffd24a4dadc1da06d140a62672301569dbeea05d26c69d01186"
+    }
+  },
+  "logs": [
+    {
+      "path": "../../logs/2026-08-26-five-commit-extraction.md",
+      "digest": "sha256:20dd750ed10c708016d03fca68ee44fb067b87aeaf456b7ea25347dc3634282c"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/acceptance.md",
+      "digest": "sha256:7914560c6ce24c94dcdf798e366302953b499b23000733762140773aa8eeb773"
+    },
+    {
+      "path": "artifacts/install.md",
+      "digest": "sha256:703b0c2fbdb122e08b553954791638d425be5069a8c0dc6d6ac5828df8c7268e"
+    }
+  ],
+  "target": {
+    "kind": "git",
+    "uri": "file:///root/dsh-skill-manager",
+    "commit": "c374b087c6a4bb463c3e1cba17ac3009507ed8a7",
+    "paths": [
+      "AGENTS.md",
+      "LICENSE",
+      "README.md",
+      "packages/dsh-skill-manager",
+      "patches/deepseek-harness.patch",
+      "scripts",
+      "tsconfig.host.json"
+    ]
+  },
+  "acceptance": {
+    "status": "incomplete",
+    "evidence": [
+      {
+        "id": "external-build-and-profile-install",
+        "observedOn": "2026-08-26",
+        "artifact": "artifacts/acceptance.md",
+        "result": "external Host and browser contributions built, catalogs regenerated, and the package linked into the web profile"
+      },
+      {
+        "id": "owned-seam-and-remote-contribution",
+        "observedOn": "2026-08-26",
+        "artifact": "artifacts/acceptance.md",
+        "result": "the exact locator-marked compatibility patch is setup-owned and reverse-applicable; Remote mounting uses the existing generic contribution capability"
+      },
+      {
+        "id": "harness-branch-cutover",
+        "observedOn": "2026-08-26",
+        "artifact": "artifacts/acceptance.md",
+        "result": "the active Harness branch equals official b150a551 while independently owned dirty interventions remain composed"
+      }
+    ]
+  },
+  "authority": {
+    "decision": "pending-user-review"
+  },
+  "unresolved": [
+    "live Host and browser behavior after an authorized reload or restart",
+    "user-visible settings, command, and first-step catalog acceptance",
+    "owned uninstall execution and subsequent reinstall",
+    "out-of-tree Typert artifact regeneration if Remote signatures change"
+  ]
+}

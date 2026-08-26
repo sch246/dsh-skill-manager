@@ -1,0 +1,38 @@
+{
+  "$schema": "meta-intent/0.2/state",
+  "id": "dsh-skill-manager",
+  "revision": "0.1.0-draft.1",
+  "status": "draft",
+  "document": "STATE.md",
+  "logs": [
+    "../logs/2026-08-26-five-commit-extraction.md"
+  ],
+  "protocol": {
+    "id": "meta-intent",
+    "revision": "0.2",
+    "package": "meta-intent",
+    "uri": "https://github.com/sch246/meta-intent.git",
+    "lock": "locks/protocol-0.2/LOCK.json",
+    "artifactDigest": "sha256:a5ce1e0acacac0e313f3f281256cd79d5d6aa2ba6cf7a5e62af7a385df2539fe"
+  },
+  "resources": [
+    {
+      "id": "target.deepseek-harness",
+      "kind": "git-checkout",
+      "uri": "file:///root/deepseek-harness",
+      "revision": "b150a551b8d465e31e418e1b2eaf5e79bbb7d28e",
+      "scope": "official remote baseline plus separately owned local intent-package interventions"
+    },
+    {
+      "id": "source.skill-enablement-five-commits",
+      "kind": "git-commit",
+      "uri": "file:///root/deepseek-harness",
+      "revision": "b642a10626a950cc95c2d6f839810cb01fe599fe",
+      "scope": "behavior and implementation evidence to be extracted, not retained on the Harness branch"
+    }
+  ],
+  "activeLocks": [],
+  "candidateLocks": [
+    "../locks/skill-manager-linux-web-0.1.0-candidate.1/LOCK.json"
+  ]
+}
