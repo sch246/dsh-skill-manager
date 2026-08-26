@@ -1,0 +1,7 @@
+{
+  "extends": "./harness/tsconfig.base.json",
+  "files": [],
+  "references": [
+    { "path": "./packages/dsh-skill-manager" }
+  ]
+}

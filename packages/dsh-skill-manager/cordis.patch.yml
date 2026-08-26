@@ -1,0 +1,5 @@
+# One Loader entry owns both the Host skill policy and its browser contribution.
+- insert:
+    - id: dsh-skill-manager
+      name: '@deepseek-ai/dsh-skill-manager'
+      config: {}

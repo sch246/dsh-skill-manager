@@ -1,0 +1,333 @@
+diff --git a/packages/client/ui-conversation/src/client/apply.ts b/packages/client/ui-conversation/src/client/apply.ts
+index 7920104d687d03f726e0013d599434adf9cc6d3b..6f8e47058f60ea83d7375806797952b340122ada 100644
+--- a/packages/client/ui-conversation/src/client/apply.ts
++++ b/packages/client/ui-conversation/src/client/apply.ts
+@@ -209,6 +209,9 @@ export function apply(ctx: Context): void {
+       'conversation.hero.brand.mark': { kind: 'single', scope: 'root' },
+       'conversation.hero.workspace': { kind: 'single', scope: 'root' },
+       'conversation.hero.agentPreset': { kind: 'single', scope: 'root' },
++      // @meta-intent:begin dsh-skill-manager (purpose: create the lifecycle-owned catalog-start slot)
++      'conversation.hero.skillCatalogStart': { kind: 'single', scope: 'root' },
++      // @meta-intent:end dsh-skill-manager
+     },
+     inject: (sessionId: SessionId | undefined): ConversationInjected => ({
+       hooks: { composerBlock: sessionId === undefined ? ABSENT_BLOCK : composerBlocks.storeFor(sessionId) },
+diff --git a/packages/client/ui-conversation/src/client/contract/slots.ts b/packages/client/ui-conversation/src/client/contract/slots.ts
+index 307ac38482eeb47ff96b403dc78d34b207029cbe..b62a3c1e7762fac81854c8ce01b34c5eea64a457 100644
+--- a/packages/client/ui-conversation/src/client/contract/slots.ts
++++ b/packages/client/ui-conversation/src/client/contract/slots.ts
+@@ -187,6 +187,14 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
+      * the next one rather than applied to a current one.
+      */
+     'conversation.hero.agentPreset': { kind: 'single'; scope: 'root'; owner: HeroAgentPresetOwnerProps }
++    // @meta-intent:begin dsh-skill-manager (purpose: declare the external catalog-start control seat)
++    /**
++     * The first-step skill-catalog choice beside the agent-preset chip on the
++     * new-session screen. Root scope: the choice addresses the current blank
++     * session through its id and hides once a turn has run.
++     */
++    'conversation.hero.skillCatalogStart': { kind: 'single'; scope: 'root'; owner: HeroSkillCatalogStartOwnerProps }
++    // @meta-intent:end dsh-skill-manager
+     // 'conversation.input.overlay' merges in ui-input-trigger (the dependency
+     // direction is the hard constraint — ui-input-trigger cannot import
+     // this package, while this package's input contract already imports
+@@ -296,6 +304,14 @@ export interface HeroAgentPresetOwnerProps {
+   children?: never
+ }
+ 
++// @meta-intent:begin dsh-skill-manager (purpose: type the external catalog-start control seat)
++/** Owner share of the hero skill-catalog choice: the shell supplies nothing. */
++export interface HeroSkillCatalogStartOwnerProps {
++  /** Marker field: the seat owns its own read and write paths. */
++  children?: never
++}
++// @meta-intent:end dsh-skill-manager
++
+ /** Owner share of the strict session content seat. */
+ export interface ConversationSessionOwnerProps {
+   /**
+@@ -646,6 +662,9 @@ export type ConversationSlotProps =
+     | 'conversation.hero.brand.mark'
+     | 'conversation.hero.workspace'
+     | 'conversation.hero.agentPreset'
++    // @meta-intent:begin dsh-skill-manager (purpose: authorize ConversationRoot to render the external seat)
++    | 'conversation.hero.skillCatalogStart'
++    // @meta-intent:end dsh-skill-manager
+   >
+   & InjectFace<ConversationInjected>
+   & PropsLocale<'conversation'>
+diff --git a/packages/client/ui-conversation/src/client/skeleton/ConversationRoot.tsx b/packages/client/ui-conversation/src/client/skeleton/ConversationRoot.tsx
+index 07655d7dbaa83cb5bf600e49492a3a1806522567..9125555d94c1e204a3b6aeb6e5d1bd6bfa29ce66 100644
+--- a/packages/client/ui-conversation/src/client/skeleton/ConversationRoot.tsx
++++ b/packages/client/ui-conversation/src/client/skeleton/ConversationRoot.tsx
+@@ -120,6 +120,9 @@ export function ConversationRoot({
+         onClose: () => { setPickerOpen(false) },
+       })}
+       {renderSlot('conversation.hero.agentPreset', {})}
++      {/* @meta-intent:begin dsh-skill-manager (purpose: place the external catalog-start control beside the preset chip) */}
++      {renderSlot('conversation.hero.skillCatalogStart', {})}
++      {/* @meta-intent:end dsh-skill-manager */}
+     </div>
+   )
+ 
+diff --git a/packages/core/scope/src/store.ts b/packages/core/scope/src/store.ts
+index 3b40693c8282782cbd847a4556aef9affe64a6ae..a45bc07f810b78dd5c9a652d74ed37b7789b2b5b 100644
+--- a/packages/core/scope/src/store.ts
++++ b/packages/core/scope/src/store.ts
+@@ -198,6 +198,19 @@ export class ScopedLayers<L extends ScopeLayer> {
+     return layers
+   }
+ 
++  // @meta-intent:begin dsh-skill-manager (purpose: expose scoped overlays to invocation-neutral management views)
++  /**
++   * Every existing exact-scope overlay, in creation order. Management
++   * surfaces use this to enumerate all contributions without a viewing
++   * scope; ordinary reads use {@link chainLayers} so the nearest layer wins.
++   * @returns an iterator over the scoped layers only (the global layer is
++   *   exposed through its own property).
++   */
++  overlays(): IterableIterator<L> {
++    return this.scoped.values()
++  }
++  // @meta-intent:end dsh-skill-manager
++
+   /**
+    * Materialize global named entries followed by scope-chain shadows,
+    * farthest ancestor first, so the nearest scope's entry wins a name.
+diff --git a/packages/core/session/src/known-event-types.ts b/packages/core/session/src/known-event-types.ts
+index 098743dd8ae13b2b39a2c7927f15ce34306de917..a4c46c79da9eafa0ed78b7963dbd00a5b9714e3e 100644
+--- a/packages/core/session/src/known-event-types.ts
++++ b/packages/core/session/src/known-event-types.ts
+@@ -45,6 +45,9 @@ export const KNOWN_SESSION_EVENT_TYPES: ReadonlySet<string> = new Set([
+   'session/end-seed',
+   'session/title',
+   'session/title-llm-request',
++  // @meta-intent:begin dsh-skill-manager (purpose: preserve the per-session first-step catalog choice)
++  'skill/catalog-at-start',
++  // @meta-intent:end dsh-skill-manager
+   'step/end',
+   'step/start',
+   'subagent/descriptor',
+diff --git a/packages/skill/skill/src/index.ts b/packages/skill/skill/src/index.ts
+index fd227f5665f652bbc2f2403412821821a253549a..817246811430341650e144cc933994f3f1809c78 100644
+--- a/packages/skill/skill/src/index.ts
++++ b/packages/skill/skill/src/index.ts
+@@ -365,6 +365,10 @@ export class SkillRegistry extends Service {
+     () => { this.invalidateCache() },
+   )
+   private readonly collectCache = new Map<string, Map<string, IndexedCandidate>>()
++  // @meta-intent:begin dsh-skill-manager (purpose: hold external policy overrides without rewriting skill providers)
++  /** Frozen runtime invocation-policy overrides keyed by skill name. */
++  private readonly invocationOverrides = new Map<string, Readonly<SkillInvocationPolicy>>()
++  // @meta-intent:end dsh-skill-manager
+   private revision = 0
+   private nextProviderOrder = 0
+   /** Stable identities for cache keys; scope keys are opaque identity-compared objects. */
+@@ -460,6 +464,41 @@ export class SkillRegistry extends Service {
+     )
+   }
+ 
++  // @meta-intent:begin dsh-skill-manager (purpose: expose one runtime policy write seam to the external skill manager)
++  /**
++   * Replace the registry's runtime invocation-policy override table.
++   *
++   * Overrides apply after layer merging, so one entry decides the winning
++   * skill's invocation regardless of which provider produced it. Every read
++   * that returns a summary or definition (`list`, `snapshot`, `get`) reflects
++   * the current table; providers are never asked to change their own
++   * candidates. Setting the same effective table is a no-op; any change
++   * invalidates catalog caches and emits `skills/change`.
++   * @param overrides - complete next table: kebab-case skill name to a
++   *   complete policy. A name absent from this record keeps its provider
++   *   policy. Invalid names or incomplete policies throw before anything
++   *   mutates.
++   */
++  setInvocationOverrides(overrides: Readonly<Record<string, SkillInvocationPolicy>>): void {
++    const next = new Map<string, Readonly<SkillInvocationPolicy>>()
++    for (const [name, policy] of Object.entries(overrides)) {
++      if (!SKILL_NAME.test(name)) throw new Error(`skill override has invalid name "${name}"`)
++      validateInvocation(policy, `skill override "${name}"`)
++      next.set(name, Object.freeze({ modelInvocable: policy.modelInvocable, userInvocable: policy.userInvocable }))
++    }
++    if (sameInvocationOverrides(this.invocationOverrides, next)) return
++    this.invocationOverrides.clear()
++    for (const [name, policy] of next) this.invocationOverrides.set(name, policy)
++    this.invalidateCache()
++  }
++
++  /** Resolve one winning summary or definition through the override table. */
++  private applyInvocationOverride<T extends SkillSummary>(summary: T, name: string): T {
++    const override = this.invocationOverrides.get(name)
++    return override === undefined ? summary : { ...summary, invocation: override }
++  }
++  // @meta-intent:end dsh-skill-manager
++
+   /**
+    * List invocation-neutral skill summaries for a workspace. Consumers apply
+    * model or user invocation policy at their operational boundary. Lookup
+@@ -483,12 +522,40 @@ export class SkillRegistry extends Service {
+     const collected = await this.collect(options)
+     return {
+       skills: [...collected.entries.values()]
+-        .map(entry => toSummary(entry.candidate))
++        // @meta-intent:begin dsh-skill-manager (purpose: apply external invocation policy to catalog reads)
++        .map(entry => this.applyInvocationOverride(toSummary(entry.candidate), entry.candidate.name))
++        // @meta-intent:end dsh-skill-manager
+         .sort(compareSkillSummary),
+       complete: collected.cacheable,
+     }
+   }
+ 
++  // @meta-intent:begin dsh-skill-manager (purpose: enumerate all scoped skill contributions for the management surface)
++  /**
++   * List the invocation-neutral catalog across every registered layer,
++   * global first and scoped overlays in creation order, first layer winning
++   * a name. This is the management view: without a viewing scope, an
++   * invocation-neutral surface needs every contribution once. Unlike
++   * {@link list}, the enumeration is never cached — management reads are
++   * rare and must not pin scoped layers.
++   * @param options - lookup options; `cwd` selects workspace-sensitive skills and `signal` cancels discovery.
++   * @returns name-sorted winning summaries across all layers, overrides applied.
++   */
++  async listAll(options: SkillLookupOptions = {}): Promise<SkillSummary[]> {
++    throwIfAborted(options.signal)
++    const merged = new Map<string, IndexedCandidate>()
++    for (const layer of [this.layers.global, ...this.layers.overlays()]) {
++      const collected = await this.collectLayer(layer, options)
++      for (const entry of collected.entries) {
++        if (!merged.has(entry.candidate.name)) merged.set(entry.candidate.name, entry)
++      }
++    }
++    return [...merged.values()]
++      .map(entry => this.applyInvocationOverride(toSummary(entry.candidate), entry.candidate.name))
++      .sort(compareSkillSummary)
++  }
++  // @meta-intent:end dsh-skill-manager
++
+   /**
+    * Load and validate the winning candidate, passing its opaque discovery locator back to the
+    * provider. Cancellation is rechecked after selection, including cache hits, and raced against
+@@ -514,7 +581,10 @@ export class SkillRegistry extends Service {
+       this.invalidateEntry(match)
+       return undefined
+     }
+-    return definition
++    // @meta-intent:begin dsh-skill-manager (purpose: apply external invocation policy to loaded definitions)
++    const resolved = this.applyInvocationOverride(definition, definition.name)
++    // @meta-intent:end dsh-skill-manager
++    return resolved
+   }
+ 
+   private async collect(options: SkillViewOptions): Promise<CollectResult> {
+@@ -794,6 +864,25 @@ function validateInvocation(invocation: unknown, subject: string): void {
+   }
+ }
+ 
++// @meta-intent:begin dsh-skill-manager (purpose: avoid invalidating catalogs when external policy is unchanged)
++/** Whether two override tables resolve every name to the same policy. */
++function sameInvocationOverrides(
++  current: ReadonlyMap<string, Readonly<SkillInvocationPolicy>>,
++  next: ReadonlyMap<string, Readonly<SkillInvocationPolicy>>,
++): boolean {
++  if (current.size !== next.size) return false
++  for (const [name, policy] of next) {
++    const existing = current.get(name)
++    if (existing === undefined
++      || existing.modelInvocable !== policy.modelInvocable
++      || existing.userInvocable !== policy.userInvocable) {
++      return false
++    }
++  }
++  return true
++}
++// @meta-intent:end dsh-skill-manager
++
+ function compareSkillSummary(left: SkillSummary, right: SkillSummary): number {
+   return compareCodePoints(left.name, right.name)
+ }
+diff --git a/packages/skill/tool-skill/src/index.ts b/packages/skill/tool-skill/src/index.ts
+index e2a0cc2dca2817d2d2984b074c1f69e81b2b444e..f4c9f18382abd0843cb27ddc9d25e1f6fc65f39e 100644
+--- a/packages/skill/tool-skill/src/index.ts
++++ b/packages/skill/tool-skill/src/index.ts
+@@ -10,7 +10,9 @@ import z from '@deepseek-ai/schemastery'
+ import type { Agent, PreStepDecision } from '@deepseek-ai/dsh-agent'
+ import { defineTool } from '@deepseek-ai/dsh-tools'
+ import { createUserMessage } from '@deepseek-ai/dsh-llm'
+-import type { UserMessage } from '@deepseek-ai/dsh-session'
++// @meta-intent:begin dsh-skill-manager (purpose: type the external plugin's durable catalog-start event)
++import type { SessionEvent, UserMessage } from '@deepseek-ai/dsh-session'
++// @meta-intent:end dsh-skill-manager
+ import {
+   escapeText,
+   isModelInvocable,
+@@ -21,6 +23,15 @@ import {
+   type SkillSummary,
+ } from '@deepseek-ai/dsh-skill'
+ 
++// @meta-intent:begin dsh-skill-manager (purpose: define the logged choice consumed by the first-step catalog gate)
++declare module '@deepseek-ai/dsh-session/types' {
++  interface SessionEventMap {
++    /** Newest choice wins; absent means publish the catalog on the first model step. */
++    'skill/catalog-at-start': { enabled: boolean }
++  }
++}
++// @meta-intent:end dsh-skill-manager
++
+ export const name = 'tool-skill'
+ export const inject = ['agents', 'tools', 'skills']
+ 
+@@ -233,6 +244,17 @@ export function apply(ctx: Context, config: Config = {}): void {
+         ? decision
+         : { kind: 'enter', messages: decision.messages.filter(message => message.id !== existing.message.id) }
+     }
++    // @meta-intent:begin dsh-skill-manager (purpose: let a blank session delay its initial skill catalog)
++    // The per-session choice to delay the catalog: while no model work exists
++    // and the newest `skill/catalog-at-start` choice is off, the first step
++    // publishes nothing. A later step re-enters with `published` still false
++    // and publishes the initial catalog then.
++    if (!history.published && !startedModelWork(agent) && !catalogStartEnabled(agent.session.events)) {
++      return existing === undefined
++        ? decision
++        : { kind: 'enter', messages: decision.messages.filter(message => message.id !== existing.message.id) }
++    }
++    // @meta-intent:end dsh-skill-manager
+     if (existing !== undefined && digestCatalogEntries(existing.entries) === digest) return decision
+     if (!history.published && skills.length === 0) {
+       return existing === undefined
+@@ -376,6 +398,22 @@ function catalogHistory(agent: Agent): { visibleDigest?: string; published: bool
+   return { published }
+ }
+ 
++// @meta-intent:begin dsh-skill-manager (purpose: resolve the newest catalog-start choice without adding plugin state)
++/** Whether the session has produced any model work beyond its first request. */
++function startedModelWork(agent: Agent): boolean {
++  return agent.session.events.some(event => event.type === 'assistant/message')
++}
++
++/** The per-session first-step catalog choice, newest event winning; absent means inject. */
++function catalogStartEnabled(events: readonly SessionEvent[]): boolean {
++  for (let index = events.length - 1; index >= 0; index -= 1) {
++    const event = events[index]
++    if (event?.type === 'skill/catalog-at-start') return event.data.enabled
++  }
++  return true
++}
++// @meta-intent:end dsh-skill-manager
++
+ function catalogMessage(
+   messages: readonly UserMessage[],
+ ): { message: UserMessage; entries: SkillCatalogSource['entries'] } | undefined {
+diff --git a/scripts/gen-cordis-catalog.ts b/scripts/gen-cordis-catalog.ts
+index 522e98df962fd0db1dfa9a8cc389f58b5154975b..9e5531903a9451b8a30c0113ec55cf580d0b97cf 100644
+--- a/scripts/gen-cordis-catalog.ts
++++ b/scripts/gen-cordis-catalog.ts
+@@ -401,6 +401,9 @@ export const LINK_MAP: Readonly<Record<string, string>> = {
+   SessionTitleSnapshot: 'session-title.md',
+   SkillCatalogSnapshot: 'skills.md',
+   SkillDefinition: 'skills.md',
++  // @meta-intent:begin dsh-skill-manager (purpose: link the generic invocation-policy seam in generated API docs)
++  SkillInvocationPolicy: 'skills.md',
++  // @meta-intent:end dsh-skill-manager
+   SkillLookupOptions: 'skills.md',
+   SkillProvider: 'skills.md',
+   SkillProviderObservation: 'skills.md',

@@ -1,0 +1,4 @@
+/harness
+/node_modules
+/packages/dsh-skill-manager/node_modules
+*.tsbuildinfo

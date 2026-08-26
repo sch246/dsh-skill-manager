@@ -1,0 +1,18 @@
+{
+  "extends": "../../harness/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib/types",
+    "tsBuildInfoFile": "lib/types/tsconfig.tsbuildinfo"
+  },
+  "include": ["src/index.ts", "src/remote.ts", "src/types.ts"],
+  "references": [
+    { "path": "../../harness/vendor/cordis" },
+    { "path": "../../harness/vendor/schemastery" },
+    { "path": "../../harness/packages/core/session" },
+    { "path": "../../harness/packages/interaction/commands" },
+    { "path": "../../harness/packages/settings/settings" },
+    { "path": "../../harness/packages/skill/skill" },
+    { "path": "../../harness/packages/typert/protocol" }
+  ]
+}
