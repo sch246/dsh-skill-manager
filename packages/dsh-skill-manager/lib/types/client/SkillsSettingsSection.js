@@ -5,7 +5,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
  * re-lists the authoritative catalog.
  */
 import { useEffect, useId, useMemo, useState } from 'react';
-import css from './SkillsSettingsSection.module.css';
+import css from "./styles.js";
 /** Whether a row matches the local catalog query. */
 function matches(row, normalizedQuery) {
     if (normalizedQuery.length === 0)

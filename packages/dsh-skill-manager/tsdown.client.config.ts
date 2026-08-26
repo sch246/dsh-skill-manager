@@ -1,7 +1,35 @@
-import { clientBundle } from '../../harness/packages/client/tsdown.client.ts'
+import type { UserConfig } from 'tsdown'
 
-export default clientBundle(
-  '@deepseek-ai/dsh-skill-manager',
-  ['lib/types/index.js'],
-  { hostPhase: true },
-)
+const PLUGIN_ID = '@deepseek-ai/dsh-skill-manager'
+const CLIENT_EXTERNALS = [
+  'react',
+  'react/jsx-runtime',
+  'react-dom',
+  'react-dom/client',
+]
+
+const clientBundle: UserConfig = {
+  entry: { client: 'lib/types/client/index.js' },
+  outDir: 'lib',
+  format: 'cjs',
+  platform: 'browser',
+  dts: false,
+  sourcemap: true,
+  clean: false,
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'production'),
+  },
+  deps: {
+    neverBundle: [...CLIENT_EXTERNALS],
+    alwaysBundle: (id: string) => !CLIENT_EXTERNALS.includes(id),
+  },
+  outputOptions: {
+    entryFileNames: 'client.js',
+    banner: 'window.__ModuleLoader__.load({ id: ' + JSON.stringify(PLUGIN_ID) + ', factory: (require) => {',
+    footer: 'return module.exports; } });',
+    intro: 'var module = { exports: {} }; var exports = module.exports;',
+    codeSplitting: false,
+  },
+}
+
+export default [clientBundle] satisfies UserConfig[]

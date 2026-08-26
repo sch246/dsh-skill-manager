@@ -28,6 +28,19 @@ if [ -f "$STATE_FILE" ]; then
 fi
 PATCH_APPLIED_BY_SETUP=false
 
+write_receipt() {
+  local install_complete="$1"
+  {
+    echo "patch_sha256=$PATCH_SHA"
+    echo "patch_applied_by_setup=$PATCH_APPLIED_BY_SETUP"
+    echo "install_complete=$install_complete"
+    echo "host_head=$(git -C "$CHECKOUT" rev-parse HEAD)"
+    echo "marker_schema=meta-intent-source-region/0.1"
+    echo "regions=skill.invocation-overrides,skill.catalog-at-start,conversation.hero.skill-catalog-start"
+    echo "generated_catalogs=packages/extensions/cordis-client-runner/src/client/slot-catalog.ts,packages/extensions/cordis-client-runner/src/client/api-catalog.ts,packages/extensions/tool-cordis/src/api-catalog.ts"
+  } > "$STATE_FILE"
+}
+
 verify_markers() {
   local needle='@meta-intent:begin dsh-skill-manager '
   local paths=(
@@ -65,6 +78,10 @@ fi
 
 verify_markers
 
+# Persist ownership as soon as the seam is present. If a later build fails, a
+# rerun can resume without misclassifying our patch as externally owned.
+write_receipt false
+
 echo "setup: regenerating shared catalogs..."
 (cd "$CHECKOUT" && pnpm run gen-client-catalog && pnpm run gen-cordis-api)
 
@@ -74,15 +91,6 @@ echo "setup: rebuilding changed Harness artifacts..."
 
 DSH_CHECKOUT="$CHECKOUT" bash "$ROOT/scripts/build.sh"
 
-{
-  echo "patch_sha256=$PATCH_SHA"
-  echo "patch_applied_by_setup=$PATCH_APPLIED_BY_SETUP"
-  echo "host_head=$(git -C "$CHECKOUT" rev-parse HEAD)"
-  echo "marker_schema=meta-intent-source-region/0.1"
-  echo "regions=skill.invocation-overrides,skill.catalog-at-start,conversation.hero.skill-catalog-start"
-  echo "generated_catalogs=packages/extensions/cordis-client-runner/src/client/slot-catalog.ts,packages/extensions/cordis-client-runner/src/client/api-catalog.ts,packages/extensions/tool-cordis/src/api-catalog.ts"
-} > "$STATE_FILE"
-
 CHECKOUT_CLI="$CHECKOUT/apps/cli/lib/bin.js"
 if command -v dsh >/dev/null 2>&1; then
   (cd "$PACKAGE" && dsh plugin --profile "$PROFILE" add .)
@@ -91,5 +99,7 @@ elif [ -f "$CHECKOUT_CLI" ]; then
 else
   (cd "$PACKAGE" && pnpm --dir "$CHECKOUT" dsh plugin --profile "$PROFILE" add .)
 fi
+
+write_receipt true
 
 echo "setup: installed into profile $PROFILE; no service restart was performed"

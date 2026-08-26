@@ -8,7 +8,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
  * the first step, and a started session keeps the one it already ran.
  */
 import { useEffect, useState } from 'react';
-import css from './SkillCatalogStartSeat.module.css';
+import css from "./styles.js";
 /**
  * Render the hero checkbox, or null when no blank session exists.
  * @param props - composed slot props.

@@ -7,7 +7,7 @@
 import { useEffect, useId, useMemo, useState, type ReactNode } from 'react'
 import type { SkillManagerList } from '@deepseek-ai/dsh-skill-manager/types'
 import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import css from './SkillsSettingsSection.module.css'
+import css from './styles.ts'
 
 /** Registration-side Remote face used by the section. */
 export interface SkillsSettingsSectionInjected {

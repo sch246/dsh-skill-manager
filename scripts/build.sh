@@ -54,6 +54,6 @@ echo "building browser declarations..."
 "$CHECKOUT/node_modules/.bin/tsc" -p "$PACKAGE/tsconfig.client.json"
 
 echo "bundling browser contribution..."
-(cd "$PACKAGE" && "$CHECKOUT/node_modules/.bin/tsdown" --config tsdown.client.config.ts --env.DSH_BUILD_FACE client)
+(cd "$PACKAGE" && "$CHECKOUT/node_modules/.bin/tsdown" --config tsdown.client.config.ts)
 
 echo "build: complete"
