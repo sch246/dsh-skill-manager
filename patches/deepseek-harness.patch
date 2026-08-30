@@ -1,8 +1,8 @@
 diff --git a/packages/client/ui-conversation/src/client/apply.ts b/packages/client/ui-conversation/src/client/apply.ts
-index 7920104d687d03f726e0013d599434adf9cc6d3b..6f8e47058f60ea83d7375806797952b340122ada 100644
+index b154e73f4abc7034d93cac9b4634c65483731a08..364abd85db0a89265953e7b34d4807e94ef47dc8 100644
 --- a/packages/client/ui-conversation/src/client/apply.ts
 +++ b/packages/client/ui-conversation/src/client/apply.ts
-@@ -209,6 +209,9 @@ export function apply(ctx: Context): void {
+@@ -185,6 +185,9 @@ export function apply(ctx: Context): void {
        'conversation.hero.brand.mark': { kind: 'single', scope: 'root' },
        'conversation.hero.workspace': { kind: 'single', scope: 'root' },
        'conversation.hero.agentPreset': { kind: 'single', scope: 'root' },
@@ -11,14 +11,14 @@ index 7920104d687d03f726e0013d599434adf9cc6d3b..6f8e47058f60ea83d7375806797952b3
 +      // @meta-intent:end dsh-skill-manager
      },
      inject: (sessionId: SessionId | undefined): ConversationInjected => ({
-       hooks: { composerBlock: sessionId === undefined ? ABSENT_BLOCK : composerBlocks.storeFor(sessionId) },
+       hooks: {
 diff --git a/packages/client/ui-conversation/src/client/contract/slots.ts b/packages/client/ui-conversation/src/client/contract/slots.ts
-index 307ac38482eeb47ff96b403dc78d34b207029cbe..b62a3c1e7762fac81854c8ce01b34c5eea64a457 100644
+index 377a75ee0019ac0b791bf659ac390df1bd46d81a..7c67e5dd201096e59873bff22ef65c425aeb4a9a 100644
 --- a/packages/client/ui-conversation/src/client/contract/slots.ts
 +++ b/packages/client/ui-conversation/src/client/contract/slots.ts
-@@ -187,6 +187,14 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
-      * the next one rather than applied to a current one.
-      */
+@@ -123,6 +123,14 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
+     'conversation.hero.brand.mark': { kind: 'single'; scope: 'root'; owner: HeroBrandMarkOwnerProps }
+     /** Agent-preset control staged for a New Session. */
      'conversation.hero.agentPreset': { kind: 'single'; scope: 'root'; owner: HeroAgentPresetOwnerProps }
 +    // @meta-intent:begin dsh-skill-manager (purpose: declare the external catalog-start control seat)
 +    /**
@@ -28,10 +28,10 @@ index 307ac38482eeb47ff96b403dc78d34b207029cbe..b62a3c1e7762fac81854c8ce01b34c5e
 +     */
 +    'conversation.hero.skillCatalogStart': { kind: 'single'; scope: 'root'; owner: HeroSkillCatalogStartOwnerProps }
 +    // @meta-intent:end dsh-skill-manager
-     // 'conversation.input.overlay' merges in ui-input-trigger (the dependency
-     // direction is the hard constraint — ui-input-trigger cannot import
-     // this package, while this package's input contract already imports
-@@ -296,6 +304,14 @@ export interface HeroAgentPresetOwnerProps {
+     /** Full-width entries above the composer card. */
+     'conversation.input.dock': { kind: 'list'; scope: 'session'; owner: InputZone }
+     /** Floating entries rendered inside the resident composer card. */
+@@ -177,6 +185,14 @@ export interface HeroAgentPresetOwnerProps {
    children?: never
  }
  
@@ -43,10 +43,10 @@ index 307ac38482eeb47ff96b403dc78d34b207029cbe..b62a3c1e7762fac81854c8ce01b34c5e
 +}
 +// @meta-intent:end dsh-skill-manager
 +
- /** Owner share of the strict session content seat. */
- export interface ConversationSessionOwnerProps {
-   /**
-@@ -646,6 +662,9 @@ export type ConversationSlotProps =
+ /** Header actions derive their state from standard Session props. */
+ export interface ConversationHeaderActionOwnerProps {
+   /** Marker field: entries receive no owner-specific values. */
+@@ -327,6 +343,9 @@ export type ConversationSlotProps =
      | 'conversation.hero.brand.mark'
      | 'conversation.hero.workspace'
      | 'conversation.hero.agentPreset'
@@ -57,10 +57,10 @@ index 307ac38482eeb47ff96b403dc78d34b207029cbe..b62a3c1e7762fac81854c8ce01b34c5e
    & InjectFace<ConversationInjected>
    & PropsLocale<'conversation'>
 diff --git a/packages/client/ui-conversation/src/client/skeleton/ConversationRoot.tsx b/packages/client/ui-conversation/src/client/skeleton/ConversationRoot.tsx
-index 07655d7dbaa83cb5bf600e49492a3a1806522567..9125555d94c1e204a3b6aeb6e5d1bd6bfa29ce66 100644
+index 7b81d4db924cdd13e875d477d6f04ff7747115c2..5e73a3a4745f1f6fc864a80ef7171ba83ac90481 100644
 --- a/packages/client/ui-conversation/src/client/skeleton/ConversationRoot.tsx
 +++ b/packages/client/ui-conversation/src/client/skeleton/ConversationRoot.tsx
-@@ -120,6 +120,9 @@ export function ConversationRoot({
+@@ -313,6 +313,9 @@ export function ConversationRoot({
          onClose: () => { setPickerOpen(false) },
        })}
        {renderSlot('conversation.hero.agentPreset', {})}
@@ -94,20 +94,6 @@ index 3b40693c8282782cbd847a4556aef9affe64a6ae..a45bc07f810b78dd5c9a652d74ed37b7
    /**
     * Materialize global named entries followed by scope-chain shadows,
     * farthest ancestor first, so the nearest scope's entry wins a name.
-diff --git a/packages/core/session/src/known-event-types.ts b/packages/core/session/src/known-event-types.ts
-index 098743dd8ae13b2b39a2c7927f15ce34306de917..a4c46c79da9eafa0ed78b7963dbd00a5b9714e3e 100644
---- a/packages/core/session/src/known-event-types.ts
-+++ b/packages/core/session/src/known-event-types.ts
-@@ -45,6 +45,9 @@ export const KNOWN_SESSION_EVENT_TYPES: ReadonlySet<string> = new Set([
-   'session/end-seed',
-   'session/title',
-   'session/title-llm-request',
-+  // @meta-intent:begin dsh-skill-manager (purpose: preserve the per-session first-step catalog choice)
-+  'skill/catalog-at-start',
-+  // @meta-intent:end dsh-skill-manager
-   'step/end',
-   'step/start',
-   'subagent/descriptor',
 diff --git a/packages/skill/skill/src/index.ts b/packages/skill/skill/src/index.ts
 index fd227f5665f652bbc2f2403412821821a253549a..817246811430341650e144cc933994f3f1809c78 100644
 --- a/packages/skill/skill/src/index.ts
@@ -246,7 +232,7 @@ index fd227f5665f652bbc2f2403412821821a253549a..817246811430341650e144cc933994f3
    return compareCodePoints(left.name, right.name)
  }
 diff --git a/packages/skill/tool-skill/src/index.ts b/packages/skill/tool-skill/src/index.ts
-index e2a0cc2dca2817d2d2984b074c1f69e81b2b444e..f4c9f18382abd0843cb27ddc9d25e1f6fc65f39e 100644
+index 222e8a0acec14cd91b0bad344416875a5976b356..5141c9b85d3e83e22985e8b823ee99ab36501e25 100644
 --- a/packages/skill/tool-skill/src/index.ts
 +++ b/packages/skill/tool-skill/src/index.ts
 @@ -10,7 +10,9 @@ import z from '@deepseek-ai/schemastery'
@@ -278,7 +264,7 @@ index e2a0cc2dca2817d2d2984b074c1f69e81b2b444e..f4c9f18382abd0843cb27ddc9d25e1f6
  
 @@ -233,6 +244,17 @@ export function apply(ctx: Context, config: Config = {}): void {
          ? decision
-         : { kind: 'enter', messages: decision.messages.filter(message => message.id !== existing.message.id) }
+         : { ...decision, messages: decision.messages.filter(message => message.id !== existing.message.id) }
      }
 +    // @meta-intent:begin dsh-skill-manager (purpose: let a blank session delay its initial skill catalog)
 +    // The per-session choice to delay the catalog: while no model work exists
@@ -288,7 +274,7 @@ index e2a0cc2dca2817d2d2984b074c1f69e81b2b444e..f4c9f18382abd0843cb27ddc9d25e1f6
 +    if (!history.published && !startedModelWork(agent) && !catalogStartEnabled(agent.session.events)) {
 +      return existing === undefined
 +        ? decision
-+        : { kind: 'enter', messages: decision.messages.filter(message => message.id !== existing.message.id) }
++        : { ...decision, messages: decision.messages.filter(message => message.id !== existing.message.id) }
 +    }
 +    // @meta-intent:end dsh-skill-manager
      if (existing !== undefined && digestCatalogEntries(existing.entries) === digest) return decision
@@ -318,10 +304,10 @@ index e2a0cc2dca2817d2d2984b074c1f69e81b2b444e..f4c9f18382abd0843cb27ddc9d25e1f6
    messages: readonly UserMessage[],
  ): { message: UserMessage; entries: SkillCatalogSource['entries'] } | undefined {
 diff --git a/scripts/gen-cordis-catalog.ts b/scripts/gen-cordis-catalog.ts
-index 522e98df962fd0db1dfa9a8cc389f58b5154975b..9e5531903a9451b8a30c0113ec55cf580d0b97cf 100644
+index 1bae81253b379591a9fd3c1ceab627f8e859c7a8..fbff4db84d18b511b50c03e528374ccb619322bc 100644
 --- a/scripts/gen-cordis-catalog.ts
 +++ b/scripts/gen-cordis-catalog.ts
-@@ -401,6 +401,9 @@ export const LINK_MAP: Readonly<Record<string, string>> = {
+@@ -462,6 +462,9 @@ export const LINK_MAP: Readonly<Record<string, string>> = {
    SessionTitleSnapshot: 'session-title.md',
    SkillCatalogSnapshot: 'skills.md',
    SkillDefinition: 'skills.md',

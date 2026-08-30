@@ -37,7 +37,7 @@ write_receipt() {
     echo "host_head=$(git -C "$CHECKOUT" rev-parse HEAD)"
     echo "marker_schema=meta-intent-source-region/0.1"
     echo "regions=skill.invocation-overrides,skill.catalog-at-start,conversation.hero.skill-catalog-start"
-    echo "generated_catalogs=packages/extensions/cordis-client-runner/src/client/slot-catalog.ts,packages/extensions/cordis-client-runner/src/client/api-catalog.ts,packages/extensions/tool-cordis/src/api-catalog.ts"
+    echo "generated_catalogs=docs/persistence-catalog.md,packages/core/session/src/known-event-types.ts,packages/extensions/cordis-client-runner/src/client/slot-catalog.ts,packages/extensions/cordis-client-runner/src/client/api-catalog.ts,packages/extensions/tool-cordis/src/api-catalog.ts"
   } > "$STATE_FILE"
 }
 
@@ -45,7 +45,6 @@ verify_markers() {
   local needle='@meta-intent:begin dsh-skill-manager '
   local paths=(
     packages/core/scope/src/store.ts
-    packages/core/session/src/known-event-types.ts
     packages/skill/skill/src/index.ts
     packages/skill/tool-skill/src/index.ts
     packages/client/ui-conversation/src/client/apply.ts
@@ -83,7 +82,7 @@ verify_markers
 write_receipt false
 
 echo "setup: regenerating shared catalogs..."
-(cd "$CHECKOUT" && pnpm run gen-client-catalog && pnpm run gen-cordis-api)
+(cd "$CHECKOUT" && pnpm run gen-persistence-catalog && pnpm run gen-client-catalog && pnpm run gen-cordis-api)
 
 echo "setup: rebuilding changed Harness artifacts..."
 (cd "$CHECKOUT" && pnpm run build:lib:host)

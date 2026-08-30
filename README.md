@@ -4,7 +4,7 @@ An external Host/Web plugin extracted from the five local Skill-enablement commi
 
 The Host half owns the settings-backed disabled-skill policy, `/skills`, and the `skillManager` Remote. The browser half mounts this package's generated Remote contribution through Harness's generic `ctx.remote.$mount(...)` seam, then adds the Skills settings section and the blank-session “inject catalog at start” control. No package-specific Remote import remains in Harness.
 
-Harness compatibility is limited to `patches/deepseek-harness.patch`: generic invocation overrides and all-layer enumeration, the durable catalog-start event and first-step gate, and one hero slot. Every region has nearby `@meta-intent:begin/end dsh-skill-manager` locators. Setup records exact patch ownership in the Harness Git directory; uninstall refuses drifted or externally owned regions.
+Harness compatibility is limited to `patches/deepseek-harness.patch`: generic invocation overrides and all-layer enumeration, the durable catalog-start event and first-step gate, and one hero slot. Every source region has nearby `@meta-intent:begin/end dsh-skill-manager` locators. Setup regenerates the shared persistence, Client, and Cordis catalogs, records exact patch ownership in the Harness Git directory, and uninstall refuses drifted or externally owned regions.
 
 ```bash
 DSH_CHECKOUT=/root/deepseek-harness bash scripts/setup.sh

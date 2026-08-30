@@ -36,7 +36,7 @@ else
 fi
 
 git -C "$CHECKOUT" apply --reverse "$PATCH"
-(cd "$CHECKOUT" && pnpm run gen-client-catalog && pnpm run gen-cordis-api)
+(cd "$CHECKOUT" && pnpm run gen-persistence-catalog && pnpm run gen-client-catalog && pnpm run gen-cordis-api)
 (cd "$CHECKOUT" && pnpm run build:lib:host)
 (cd "$CHECKOUT" && pnpm --filter @deepseek-ai/dsh-client-ui-conversation bundle)
 rm "$STATE_FILE"
