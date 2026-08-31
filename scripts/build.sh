@@ -37,18 +37,26 @@ ensure_link "$PACKAGE/node_modules/@types/react" "$CHECKOUT/packages/client/ui-r
 ensure_link "$PACKAGE/node_modules/@types/react-dom" "$CHECKOUT/packages/client/ui-renderer/node_modules/@types/react-dom"
 ensure_link "$PACKAGE/node_modules/zod" "$CHECKOUT/packages/api/gateway/node_modules/zod"
 
+rm -rf "$PACKAGE/lib"
+
 echo "building Host declarations..."
 "$CHECKOUT/node_modules/.bin/tsc" -p "$PACKAGE/tsconfig.json"
 
 echo "bundling Host entry..."
 (cd "$PACKAGE" && "$CHECKOUT/node_modules/.bin/tsdown" --config tsdown.host.config.ts)
 
+echo "generating Host and Client Remote Typert artifacts..."
+"$CHECKOUT/node_modules/.bin/tsx" "$ROOT/scripts/generate-typert.ts"
+
 for artifact in typert.host.js typert.host.d.ts typert.remote-client.js typert.remote-client.d.ts; do
   if [ ! -f "$PACKAGE/lib/$artifact" ]; then
-    echo "build: retained Typert artifact is missing: lib/$artifact" >&2
+    echo "build: generated Typert artifact is missing: lib/$artifact" >&2
     exit 1
   fi
 done
+
+echo "preparing Harness browser declarations..."
+"$CHECKOUT/node_modules/.bin/tsc" -b "$CHECKOUT/tsconfig.client.json"
 
 echo "building browser declarations..."
 "$CHECKOUT/node_modules/.bin/tsc" -p "$PACKAGE/tsconfig.client.json"

@@ -1,5 +1,4 @@
 import { isSkillName } from "@deepseek-ai/dsh-skill";
-import { installSettingsSection, settingsNamespace } from "@deepseek-ai/dsh-settings";
 import z from "@deepseek-ai/schemastery";
 import { Remote, TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
 //#region lib/types/remote.js
@@ -202,7 +201,7 @@ const name = "skill-manager";
 /** Required service: the skill registry this policy governs. */
 const inject = ["skills"];
 /** Settings namespace carrying the user's disabled-skill table. */
-const SKILL_MANAGER_NAMESPACE = settingsNamespace("skill-manager");
+const SKILL_MANAGER_NAMESPACE = "skill-manager";
 /** Schema of the settings section: kebab-case skill name to disabled flag. */
 const SKILL_MANAGER_SCHEMA = z.object({ disabled: z.dict(z.boolean()).default({}) });
 /** Composition entry used as the settings base: nothing disabled. */
@@ -245,14 +244,16 @@ function apply(ctx) {
 			}]);
 		}
 	};
-	installSettingsSection(ctx, SKILL_MANAGER_NAMESPACE, SKILL_MANAGER_SCHEMA, DEFAULT_SETTINGS, {
-		setSource: (next) => {
-			current = next;
-		},
-		onChange: () => {
-			ctx.skills.setInvocationOverrides(overridesFrom(deps.current()));
-		},
-		validate: validateSettings
+	ctx.inject(["settings"], (settingsCtx) => {
+		settingsCtx.settings.installSection(ctx, SKILL_MANAGER_NAMESPACE, SKILL_MANAGER_SCHEMA, DEFAULT_SETTINGS, {
+			setSource: (next) => {
+				current = next;
+			},
+			onChange: () => {
+				ctx.skills.setInvocationOverrides(overridesFrom(deps.current()));
+			},
+			validate: validateSettings
+		});
 	});
 	ctx.inject(["commands"], (commandCtx) => {
 		commandCtx.commands.register({
@@ -302,4 +303,4 @@ function apply(ctx) {
 	}, "skill-manager: restore provider invocation policies on unload");
 }
 //#endregion
-export { SKILL_MANAGER_NAMESPACE, SKILL_MANAGER_SCHEMA, apply, inject, name };
+export { SKILL_MANAGER_NAMESPACE, SKILL_MANAGER_SCHEMA, SkillManagerRemote, apply, inject, name };

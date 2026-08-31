@@ -10,14 +10,14 @@
  * @module @deepseek-ai/dsh-skill-manager
  */
 import { isSkillName } from '@deepseek-ai/dsh-skill';
-import { installSettingsSection, settingsNamespace } from '@deepseek-ai/dsh-settings';
 import z from '@deepseek-ai/schemastery';
 import { SkillManagerRemote } from "./remote.js";
+export { SkillManagerRemote } from "./remote.js";
 export const name = 'skill-manager';
 /** Required service: the skill registry this policy governs. */
 export const inject = ['skills'];
 /** Settings namespace carrying the user's disabled-skill table. */
-export const SKILL_MANAGER_NAMESPACE = settingsNamespace('skill-manager');
+export const SKILL_MANAGER_NAMESPACE = 'skill-manager';
 /** Schema of the settings section: kebab-case skill name to disabled flag. */
 export const SKILL_MANAGER_SCHEMA = z.object({
     disabled: z.dict(z.boolean()).default({}),
@@ -69,10 +69,12 @@ export function apply(ctx) {
             ]);
         },
     };
-    installSettingsSection(ctx, SKILL_MANAGER_NAMESPACE, SKILL_MANAGER_SCHEMA, DEFAULT_SETTINGS, {
-        setSource: (next) => { current = next; },
-        onChange: () => { ctx.skills.setInvocationOverrides(overridesFrom(deps.current())); },
-        validate: validateSettings,
+    ctx.inject(['settings'], (settingsCtx) => {
+        settingsCtx.settings.installSection(ctx, SKILL_MANAGER_NAMESPACE, SKILL_MANAGER_SCHEMA, DEFAULT_SETTINGS, {
+            setSource: (next) => { current = next; },
+            onChange: () => { ctx.skills.setInvocationOverrides(overridesFrom(deps.current())); },
+            validate: validateSettings,
+        });
     });
     // The /skills command activates only when a command registry is composed.
     ctx.inject(['commands'], (commandCtx) => {

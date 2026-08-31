@@ -36,8 +36,8 @@ write_receipt() {
     echo "install_complete=$install_complete"
     echo "host_head=$(git -C "$CHECKOUT" rev-parse HEAD)"
     echo "marker_schema=meta-intent-source-region/0.1"
-    echo "regions=skill.invocation-overrides,skill.catalog-at-start,conversation.hero.skill-catalog-start"
-    echo "generated_catalogs=docs/persistence-catalog.md,packages/core/session/src/known-event-types.ts,packages/extensions/cordis-client-runner/src/client/slot-catalog.ts,packages/extensions/cordis-client-runner/src/client/api-catalog.ts,packages/extensions/tool-cordis/src/api-catalog.ts"
+    echo "regions=skill.invocation-overrides,skill.catalog-at-start,conversation.hero.skill-catalog-start,typert.external-project-references"
+    echo "generated_catalogs=docs/persistence-catalog.md,docs/subsystems/skills.md,docs/subsystems/skills.zh.md,docs/subsystems/skills.i18n.yaml,packages/core/session/src/known-event-types.ts,packages/extensions/cordis-client-runner/src/client/slot-catalog.ts,packages/extensions/cordis-client-runner/src/client/api-catalog.ts,packages/extensions/tool-cordis/src/api-catalog.ts"
   } > "$STATE_FILE"
 }
 
@@ -50,6 +50,8 @@ verify_markers() {
     packages/client/ui-conversation/src/client/apply.ts
     packages/client/ui-conversation/src/client/contract/slots.ts
     packages/client/ui-conversation/src/client/skeleton/ConversationRoot.tsx
+    packages/typert/generator/src/analyzer.ts
+    packages/typert/generator/src/workspace.ts
     scripts/gen-cordis-catalog.ts
   )
   for path in "${paths[@]}"; do

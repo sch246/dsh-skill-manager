@@ -1,1 +1,1 @@
-{"version":3,"file":"typert.remote-client.d.ts","names":["catalogAtStart","list","setCatalogAtStart","setDisabled"],"sources":["../src/remote.ts"],"sourcesContent":[null],"mappings":";;;;;;;;;;IAyEEA,c;IA/BMC,I;IA4CNC,iB;IAxBMC,W;;;IAWNH,6B;IA/BMC,mB;IA4CNC,gC;IAxBMC,0B","ignoreList":[]}
+{"version":3,"file":"typert.remote-client.d.ts","names":["catalogAtStart","list","setCatalogAtStart","setDisabled"],"sources":["../src/remote.ts"],"sourcesContent":[null],"mappings":";;;;;;;;;;IAgFEA,c;IA/BMC,I;IA4CNC,iB;IAxBMC,W;;;IAWNH,6B;IA/BMC,mB;IA4CNC,gC;IAxBMC,0B","ignoreList":[]}

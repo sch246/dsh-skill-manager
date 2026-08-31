@@ -58,7 +58,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-skill-manager#skillManager/catalogAtStart:result',
         schema: _deepseek_ai_dsh_skill_manager_skillManager_catalogAtStart_result$schema,
       },
-      sourceLocation: {"file":"packages/skill/skill-manager/src/remote.ts","line":74,"column":3},
+      sourceLocation: {"file":"packages/dsh-skill-manager/src/remote.ts","line":81,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-skill-manager#skillManager/list',
@@ -73,7 +73,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-skill-manager/types#SkillManagerList',
         schema: _deepseek_ai_dsh_skill_manager_skillManager_list_result$schema,
       },
-      sourceLocation: {"file":"packages/skill/skill-manager/src/remote.ts","line":43,"column":9},
+      sourceLocation: {"file":"packages/dsh-skill-manager/src/remote.ts","line":50,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-skill-manager#skillManager/setCatalogAtStart',
@@ -109,7 +109,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-skill-manager/types#SkillCatalogStartResult',
         schema: _deepseek_ai_dsh_skill_manager_skillManager_setCatalogAtStart_result$schema,
       },
-      sourceLocation: {"file":"packages/skill/skill-manager/src/remote.ts","line":87,"column":3},
+      sourceLocation: {"file":"packages/dsh-skill-manager/src/remote.ts","line":94,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-skill-manager#skillManager/setDisabled',
@@ -144,7 +144,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-skill-manager/types#SkillManagerList',
         schema: _deepseek_ai_dsh_skill_manager_skillManager_setDisabled_result$schema,
       },
-      sourceLocation: {"file":"packages/skill/skill-manager/src/remote.ts","line":63,"column":9},
+      sourceLocation: {"file":"packages/dsh-skill-manager/src/remote.ts","line":70,"column":9},
     },
   ],
   model: {

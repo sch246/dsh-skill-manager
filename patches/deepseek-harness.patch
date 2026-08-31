@@ -317,3 +317,86 @@ index 1bae81253b379591a9fd3c1ceab627f8e859c7a8..fbff4db84d18b511b50c03e528374ccb
    SkillLookupOptions: 'skills.md',
    SkillProvider: 'skills.md',
    SkillProviderObservation: 'skills.md',
+diff --git a/packages/typert/generator/src/analyzer.ts b/packages/typert/generator/src/analyzer.ts
+index 79fcc7505d..e1792d3417 100644
+--- a/packages/typert/generator/src/analyzer.ts
++++ b/packages/typert/generator/src/analyzer.ts
+@@ -77,6 +77,10 @@ export interface WorkspaceAnalyzerOptions {
+   readonly checkDiagnostics?: boolean
+   /** Whether missing annotations fail or are written before a clean re-analysis. */
+   readonly mode?: AnalysisMode
++  // @meta-intent:begin dsh-skill-manager (purpose: let an external Typert workspace opt into its explicit dependency references)
++  /** Admit aggregate project references outside this workspace root. */
++  readonly externalProjectReferences?: boolean
++  // @meta-intent:end dsh-skill-manager
+   /** Shared workspace memo; supply one instance to reuse parses across analyzers. */
+   readonly caches?: WorkspaceCaches
+ }
+@@ -268,7 +272,7 @@ export class WorkspaceCaches {
+ export class WorkspaceAnalyzer {
+   private readonly options: Required<Pick<
+     WorkspaceAnalyzerOptions,
+-    'root' | 'hostConfig' | 'clientConfig' | 'faces' | 'checkDiagnostics' | 'mode'
++    'root' | 'hostConfig' | 'clientConfig' | 'faces' | 'checkDiagnostics' | 'mode' | 'externalProjectReferences'
+   >> & Pick<WorkspaceAnalyzerOptions, 'packages'>
+   private queuedEdit: SourceEdit | undefined
+   private readonly crossFaceLinks = new Map<string, CrossFaceLink>()
+@@ -284,6 +288,9 @@ export class WorkspaceAnalyzer {
+       faces: options.faces ?? ['host', 'client'],
+       checkDiagnostics: options.checkDiagnostics ?? true,
+       mode: options.mode ?? 'check',
++      // @meta-intent:begin dsh-skill-manager (purpose: keep external project references disabled unless requested)
++      externalProjectReferences: options.externalProjectReferences ?? false,
++      // @meta-intent:end dsh-skill-manager
+       ...(options.packages === undefined ? {} : { packages: options.packages }),
+     }
+     this.caches = options.caches ?? new WorkspaceCaches()
+@@ -468,7 +475,10 @@ export class WorkspaceAnalyzer {
+       for (const reference of aggregate.parsed.projectReferences ?? []) {
+         const configPath = projectConfigPath(reference.path)
+         const packageRoot = dirname(configPath)
+-        if (!isWithin(realPath(packageRoot), join(this.options.root, 'packages'))) continue
++        // @meta-intent:begin dsh-skill-manager (purpose: admit opted-in tree-external project references to Typert analysis)
++        if (!isWithin(realPath(packageRoot), join(this.options.root, 'packages'))
++          && !this.options.externalProjectReferences) continue
++        // @meta-intent:end dsh-skill-manager
+         const manifestPath = join(packageRoot, 'package.json')
+         if (!existsSync(manifestPath)) continue
+         const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as Record<string, unknown>
+diff --git a/packages/typert/generator/src/workspace.ts b/packages/typert/generator/src/workspace.ts
+index 50866dc8b1..a3395ba90f 100644
+--- a/packages/typert/generator/src/workspace.ts
++++ b/packages/typert/generator/src/workspace.ts
+@@ -26,4 +26,8 @@ export interface WorkspaceTypertGeneratorOptions {
+    * merges) run regardless.
+    */
+   readonly checkDiagnostics?: boolean
++  // @meta-intent:begin dsh-skill-manager (purpose: expose the external-project-reference opt-in to tree-external generators)
++  /** Admit aggregate project references outside this workspace root. */
++  readonly externalProjectReferences?: boolean
++  // @meta-intent:end dsh-skill-manager
+ }
+@@ -53,6 +57,11 @@ export class WorkspaceTypertGenerator {
+     return new WorkspaceAnalyzer({
+       root: this.root,
+       caches: this.caches,
++      // @meta-intent:begin dsh-skill-manager (purpose: apply the generator's external-project-reference opt-in during discovery)
++      ...(this.options.externalProjectReferences === undefined
++        ? {}
++        : { externalProjectReferences: this.options.externalProjectReferences }),
++      // @meta-intent:end dsh-skill-manager
+       ...(faces === undefined ? {} : { faces }),
+     }).discoverPackages()
+   }
+@@ -69,6 +78,11 @@ export class WorkspaceTypertGenerator {
+       root: this.root,
+       packages: selected,
+       caches: this.caches,
++      // @meta-intent:begin dsh-skill-manager (purpose: apply the generator's external-project-reference opt-in during emission)
++      ...(this.options.externalProjectReferences === undefined
++        ? {}
++        : { externalProjectReferences: this.options.externalProjectReferences }),
++      // @meta-intent:end dsh-skill-manager
+       ...(faces === undefined ? {} : { faces }),
+       ...(this.options.checkDiagnostics === undefined ? {} : { checkDiagnostics: this.options.checkDiagnostics }),
+     }).analyze()
