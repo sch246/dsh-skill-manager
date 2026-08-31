@@ -1,11 +1,14 @@
 {
   "$schema": "meta-intent/0.2/state",
   "id": "dsh-skill-manager",
-  "revision": "0.1.0-draft.1",
+  "revision": "0.1.0-draft.2",
   "status": "draft",
   "document": "STATE.md",
   "logs": [
-    "../logs/2026-08-26-five-commit-extraction.md"
+    "../logs/2026-08-26-five-commit-extraction.md",
+    "../logs/2026-08-27-stale-api-remotes-artifact.md",
+    "../logs/2026-08-27-stale-api-remotes-rebuild-evidence.md",
+    "../logs/2026-09-01-alpha.2-target-drift-and-recomposition.md"
   ],
   "protocol": {
     "id": "meta-intent",
@@ -17,22 +20,20 @@
   },
   "resources": [
     {
-      "id": "target.deepseek-harness",
-      "kind": "git-checkout",
-      "uri": "file:///root/deepseek-harness",
-      "revision": "b150a551b8d465e31e418e1b2eaf5e79bbb7d28e",
-      "scope": "official remote baseline plus separately owned local intent-package interventions"
+      "id": "repository.dsh-skill-manager",
+      "kind": "git-repository",
+      "uri": "file:///root/dsh-skill-manager",
+      "revision": "ec6a90f7d2d34eca0746b7e733ce0617290d6a1e",
+      "scope": "latest committed plugin source available for recomposition"
     },
     {
-      "id": "source.skill-enablement-five-commits",
-      "kind": "git-commit",
-      "uri": "file:///root/deepseek-harness",
-      "revision": "b642a10626a950cc95c2d6f839810cb01fe599fe",
-      "scope": "behavior and implementation evidence to be extracted, not retained on the Harness branch"
+      "id": "target.deepseek-harness",
+      "kind": "git-repository",
+      "uri": "https://github.com/deepseek-ai/deepseek-harness.git",
+      "revision": "0a53fb55bea101816fa226bb964ae2bed71c343b",
+      "scope": "current recomposition target; Skill-manager realization and user acceptance remain pending"
     }
   ],
   "activeLocks": [],
-  "candidateLocks": [
-    "../locks/skill-manager-linux-web-0.1.0-candidate.1/LOCK.json"
-  ]
+  "candidateLocks": []
 }
