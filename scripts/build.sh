@@ -30,12 +30,19 @@ ensure_link() {
 ensure_link "$ROOT/harness" "$CHECKOUT"
 ensure_link "$ROOT/node_modules" "$CHECKOUT/node_modules"
 
-mkdir -p "$PACKAGE/node_modules/@types"
+mkdir -p "$PACKAGE/node_modules/@types" "$PACKAGE/node_modules/@deepseek-ai"
 ensure_link "$PACKAGE/node_modules/react" "$CHECKOUT/packages/client/ui-renderer/node_modules/react"
 ensure_link "$PACKAGE/node_modules/react-dom" "$CHECKOUT/packages/client/ui-renderer/node_modules/react-dom"
 ensure_link "$PACKAGE/node_modules/@types/react" "$CHECKOUT/packages/client/ui-renderer/node_modules/@types/react"
 ensure_link "$PACKAGE/node_modules/@types/react-dom" "$CHECKOUT/packages/client/ui-renderer/node_modules/@types/react-dom"
 ensure_link "$PACKAGE/node_modules/zod" "$CHECKOUT/packages/api/gateway/node_modules/zod"
+ensure_link "$PACKAGE/node_modules/@deepseek-ai/cordis" "$CHECKOUT/vendor/cordis"
+ensure_link "$PACKAGE/node_modules/@deepseek-ai/schemastery" "$CHECKOUT/vendor/schemastery"
+ensure_link "$PACKAGE/node_modules/@deepseek-ai/dsh-commands" "$CHECKOUT/packages/interaction/commands"
+ensure_link "$PACKAGE/node_modules/@deepseek-ai/dsh-session" "$CHECKOUT/packages/core/session"
+ensure_link "$PACKAGE/node_modules/@deepseek-ai/dsh-settings" "$CHECKOUT/packages/settings/settings"
+ensure_link "$PACKAGE/node_modules/@deepseek-ai/dsh-skill" "$CHECKOUT/packages/skill/skill"
+ensure_link "$PACKAGE/node_modules/@deepseek-ai/dsh-typert-protocol" "$CHECKOUT/packages/typert/protocol"
 
 rm -rf "$PACKAGE/lib"
 
@@ -54,9 +61,6 @@ for artifact in typert.host.js typert.host.d.ts typert.remote-client.js typert.r
     exit 1
   fi
 done
-
-echo "preparing Harness browser declarations..."
-"$CHECKOUT/node_modules/.bin/tsc" -b "$CHECKOUT/tsconfig.client.json"
 
 echo "building browser declarations..."
 "$CHECKOUT/node_modules/.bin/tsc" -p "$PACKAGE/tsconfig.client.json"
