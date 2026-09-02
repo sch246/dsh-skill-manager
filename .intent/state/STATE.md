@@ -25,6 +25,7 @@ The browser half mounts this package's generated Remote contribution through the
 - Product behavior, settings and command writes, Web surfaces, profile composition, build artifacts, setup and uninstall procedures, and any required Host adaptation belong to this package's realization.
 - Harness retains only the minimum generic capabilities needed to express the desired behavior. The exact adaptation mechanism is realization-level evidence rather than intent.
 - Shared generated catalogs are regenerated from the composed source and are not statically owned by this package.
+- When a target Harness compiles client interfaces into separate declaration artifacts, installation compiles every patched client interface after applying the adaptation and before compiling this package's browser contribution. It must not consume declarations left by an earlier source generation.
 - Every realization must leave one Skill-manager behavior owner and one settings authority. Compatibility mirrors, fallback registration, static package-specific Remote imports, and second settings write paths are invalid.
 - The immutable candidate 1 bundle remains historical extraction evidence after this state revision; it does not claim applicability to the current target.
 
@@ -32,6 +33,7 @@ The browser half mounts this package's generated Remote contribution through the
 
 - Recompose the plugin against DeepSeek Harness `0a53fb55bea101816fa226bb964ae2bed71c343b` without moving Skill-manager product ownership into Harness.
 - Installation leaves exactly one served Skill-manager Remote owner, and a cold browser load completes without plugin loader failure.
+- Installation completes from the selected clean Harness target without relying on declaration artifacts produced before its Host adaptation was applied.
 - On the user's real machine, settings and `/skills` read and write the same disabled-skill authority; a disabled skill is unavailable to both model and user invocation, and re-enabling restores provider policy.
 - On the user's real machine, a blank session records and honors the newest catalog-start choice with the stated first-turn timing.
 - Uninstall removes only this package's owned effects and preserves unrelated target changes.

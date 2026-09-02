@@ -10,7 +10,7 @@ Alpha.2 already supplies dynamic `dsh.client` package loading and the generic Cl
 DSH_CHECKOUT=/root/deepseek-harness bash scripts/setup.sh
 ```
 
-Setup applies or recognizes the exact seam, regenerates shared catalogs, rebuilds affected artifacts, regenerates this package's Host and Client Remote Typert artifacts against the selected Harness checkout, builds the browser contribution, and links the Bundle into the `web` profile. It does not restart `dsh-web`.
+Setup applies or recognizes the exact seam, regenerates shared catalogs, compiles declarations for patched Client interfaces, rebuilds affected artifacts, regenerates this package's Host and Client Remote Typert artifacts against the selected Harness checkout, builds the browser contribution, and links the Bundle into the `web` profile. It does not restart `dsh-web`.
 
 ```bash
 DSH_CHECKOUT=/root/deepseek-harness bash scripts/uninstall.sh

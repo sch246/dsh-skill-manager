@@ -88,6 +88,7 @@ echo "setup: regenerating shared catalogs..."
 
 echo "setup: rebuilding changed Harness artifacts..."
 (cd "$CHECKOUT" && pnpm run build:lib:host)
+(cd "$CHECKOUT" && pnpm exec tsc -b packages/client/ui-conversation/tsconfig.json)
 (cd "$CHECKOUT" && pnpm --filter @deepseek-ai/dsh-client-ui-conversation bundle)
 
 DSH_CHECKOUT="$CHECKOUT" bash "$ROOT/scripts/build.sh"
