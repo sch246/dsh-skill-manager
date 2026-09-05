@@ -2,9 +2,9 @@
 
 Status: draft current authority for recomposition against DeepSeek Harness `0a53fb55bea101816fa226bb964ae2bed71c343b`. No realization is active or selected as a current candidate.
 
-## Using and maintaining this map
+## Map entry
 
-Use this STATE as the installation and maintenance prompt. Its first map is incomplete: investigate the selected Host and learn while realizing the desired effects. Update the map when actual user feedback or checked environmental facts change a route, requirement or evidence limit; do not promote an old Agent claim into a user preference. LOG preserves consequential reasons selectively. A realization LOCK is optional exact-recovery evidence, not a prerequisite for useful work or acceptance. The selected protocol remains 0.2; the current user's 2026-09-06 direction supersedes a mandatory LOG → STATE → LOCK choreography without rewriting that immutable protocol.
+Use the [installation and maintenance route](#installation-and-maintenance-route) and [removal route](#removal-route) for the selected deployment. The existing protocol 0.2 selection remains unchanged.
 
 ## Intent
 
