@@ -2,6 +2,10 @@
 
 Status: draft current authority for recomposition against DeepSeek Harness `0a53fb55bea101816fa226bb964ae2bed71c343b`. No realization is active or selected as a current candidate.
 
+## Using and maintaining this map
+
+Use this STATE as the installation and maintenance prompt. Its first map is incomplete: investigate the selected Host and learn while realizing the desired effects. Update the map when actual user feedback or checked environmental facts change a route, requirement or evidence limit; do not promote an old Agent claim into a user preference. LOG preserves consequential reasons selectively. A realization LOCK is optional exact-recovery evidence, not a prerequisite for useful work or acceptance. The selected protocol remains 0.2; the current user's 2026-09-06 direction supersedes a mandatory LOG → STATE → LOCK choreography without rewriting that immutable protocol.
+
 ## Intent
 
 Provide Skill enablement as one uninstallable external DeepSeek Harness plugin rather than permanent local Harness commits.
@@ -12,11 +16,35 @@ For a blank session, the Web hero offers a choice to inject the skill catalog on
 
 The browser half mounts this package's generated Remote contribution through the Host's generic Client Remote capability. Harness must not statically import this package's Remote or contain this package in official base or Web bundle manifests.
 
+## Installation and maintenance route
+
+From this repository root, select the actual Host checkout, Home and profile; `/root/deepseek-harness`, the ordinary DSH Home and `web` are local defaults. The checkout needs its installed build dependencies. Inspect its revision, local changes, existing Skill-manager registrations and Git-private receipt before applying the [owned patch](../../patches/deepseek-harness.patch). The documented alpha.2 baseline is a known source target, not a claim that the operator's checkout still matches it.
+
+```sh
+DSH_CHECKOUT=/root/deepseek-harness DSH_PROFILE=web bash scripts/setup.sh
+```
+
+[Setup](../../scripts/setup.sh) applies or recognizes the exact patch, preserves pre-existing ownership, records incomplete installation before building, regenerates persistence/Client/Cordis catalogs, builds Host artifacts and patched ui-conversation declarations and bundle, then runs the [plugin build](../../scripts/build.sh) and profile add. The link target is `packages/dsh-skill-manager`, package identity `@deepseek-ai/dsh-skill-manager`, Bundle row `dsh-skill-manager`; adding the repository root is not equivalent. Host and Client Remote artifacts are generated together. Inspect the selected CLI if `dsh` is on PATH: the scripts prefer it over the checkout CLI.
+
+After profile mutation, check that the dependency, profile lockfile, resolved package and `dsh.profile.bundles` agree, and that composed config has one row. Setup's `install_complete=true` does not establish these runtime observations. A failure after patch application may leave source, generated artifacts or profile state partially updated; inspect the receipt and failing phase, repair and resume the same route. Do not add fallback registrations to make a failed build load.
+
+On a changed Host, inspect invocation overrides/all-layer enumeration, the logged catalog-start gate, hero slot, generic Client Remote mount and tree-external Typert analysis. Reuse equivalent upstream capabilities and retire superseded patch hunks; adapt only missing capabilities. Generic Client Remote mounting and dynamic client loading are already native on alpha.2. Other packages may share ui-conversation, generator mappings and generated catalogs: compose their source contributions without claiming or erasing their effects.
+
+For the affected install or repair, build through the route above, then verify one served `skillManager/catalogAtStart` owner and cold loading. If the official api-remotes artifact still embeds the extracted Remote, rebuild it from current source with `pnpm --filter @deepseek-ai/dsh-api-remotes bundle` in the selected checkout. The [stale-artifact evidence](../logs/2026-08-27-stale-api-remotes-artifact.md) explains why source-only uniqueness is insufficient. Observe settings and `/skills` agreement, disabled/re-enabled invocation and first-turn catalog timing against Acceptance; a map-only edit needs link/JSON checks, not a live reinstall.
+
+## Removal route
+
+```sh
+DSH_CHECKOUT=/root/deepseek-harness DSH_PROFILE=web bash scripts/uninstall.sh
+```
+
+[Uninstall](../../scripts/uninstall.sh) requires an exact owned `dsh-skill-manager.patch-state` receipt and reverse check, removes the profile package, reverses source, regenerates shared catalogs and rebuilds Host and ui-conversation. For a missing, foreign or drifted receipt it exits before profile removal. Investigate ownership and use the selected `dsh plugin --profile web remove @deepseek-ai/dsh-skill-manager` for profile-only removal when the Host seam belongs elsewhere; shared capabilities stay with their remaining consumers. Verify the plugin's settings/command/UI/Remote effects are absent and provider policy is restored, while preserving settings data and other contributions. Scripts do not restart the service; activation follows the existing deployment authority.
+
 ## Current reality
 
-- Plugin source revision `ec6a90f7d2d34eca0746b7e733ce0617290d6a1e` is the latest committed source available for recomposition.
+- Plugin source `ec6a90f7d2d34eca0746b7e733ce0617290d6a1e` was the September 1 recomposition input. The map review inspected `6ecbdee0b1175c7dd720db38f9750c6b1c14d061`, including the September 2 setup repair; neither identity establishes current acceptance.
 - DeepSeek Harness `0a53fb55bea101816fa226bb964ae2bed71c343b` is the current official target. It has no accepted Skill-manager realization.
-- The last live-composed Host baseline is `cd5ef8148158c3a752a658978873241fdf8e2bbc`. Its served browser manifest had exactly one `skillManager/catalogAtStart` owner after the stale official artifact was rebuilt, and a cold browser load showed no plugin loader failure or console error.
+- The last retained served-client acceptance observations use Host baseline `cd5ef8148158c3a752a658978873241fdf8e2bbc`. Its served browser manifest had exactly one `skillManager/catalogAtStart` owner after the stale official artifact was rebuilt, and a cold browser load showed no plugin loader failure or console error.
 - That live evidence establishes only the repaired single-owner loading path. It does not establish user acceptance of settings, `/skills`, disabled-skill invocation, or blank-session catalog behavior.
 - The `b150a551b8d465e31e418e1b2eaf5e79bbb7d28e` extraction baseline and candidate 1 lock are historical evidence. They are not current target or candidate authority.
 

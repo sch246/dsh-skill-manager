@@ -1,14 +1,16 @@
 {
   "$schema": "meta-intent/0.2/state",
   "id": "dsh-skill-manager",
-  "revision": "0.1.0-draft.2",
+  "revision": "0.1.0-draft.3",
   "status": "draft",
   "document": "STATE.md",
   "logs": [
     "../logs/2026-08-26-five-commit-extraction.md",
     "../logs/2026-08-27-stale-api-remotes-artifact.md",
     "../logs/2026-08-27-stale-api-remotes-rebuild-evidence.md",
-    "../logs/2026-09-01-alpha.2-target-drift-and-recomposition.md"
+    "../logs/2026-09-01-alpha.2-target-drift-and-recomposition.md",
+    "../logs/2026-09-02-alpha2-client-declaration-build-order.md",
+    "../logs/2026-09-06-installation-maintenance-map.md"
   ],
   "protocol": {
     "id": "meta-intent",
@@ -24,7 +26,7 @@
       "kind": "git-repository",
       "uri": "file:///root/dsh-skill-manager",
       "revision": "ec6a90f7d2d34eca0746b7e733ce0617290d6a1e",
-      "scope": "latest committed plugin source available for recomposition"
+      "scope": "historical September 1 recomposition source input; current map inspection source is recorded separately, with acceptance pending"
     },
     {
       "id": "target.deepseek-harness",
@@ -32,6 +34,13 @@
       "uri": "https://github.com/deepseek-ai/deepseek-harness.git",
       "revision": "0a53fb55bea101816fa226bb964ae2bed71c343b",
       "scope": "current recomposition target; Skill-manager realization and user acceptance remain pending"
+    },
+    {
+      "id": "source.installation-map-review",
+      "kind": "git-repository",
+      "uri": "https://github.com/sch246/dsh-skill-manager.git",
+      "revision": "6ecbdee0b1175c7dd720db38f9750c6b1c14d061",
+      "scope": "source and documentation inspected for the 2026-09-06 installation map; not executed installation or acceptance evidence"
     }
   ],
   "activeLocks": [],

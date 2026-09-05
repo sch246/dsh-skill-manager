@@ -1,5 +1,7 @@
 # dsh-skill-manager
 
+Installation and maintenance start at [STATE](.intent/state/STATE.md), including target drift, ownership, removal and evidence limits.
+
 An external Host/Web plugin recomposed for DeepSeek Harness `0a53fb55bea101816fa226bb964ae2bed71c343b` (`0.1.2-alpha.2`). Its historical source was extracted from five local Skill-enablement commits rather than kept as permanent Harness commits.
 
 The Host half owns the settings-backed disabled-skill policy, `/skills`, and the `skillManager` Remote. The browser half mounts this package's generated Remote contribution through Harness's generic `ctx.remote.$mount(...)` seam, then adds the Skills settings section and the blank-session “inject catalog at start” control. No package-specific Remote import remains in Harness.
