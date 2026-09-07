@@ -10,7 +10,8 @@
     "../logs/2026-08-27-stale-api-remotes-rebuild-evidence.md",
     "../logs/2026-09-01-alpha.2-target-drift-and-recomposition.md",
     "../logs/2026-09-02-alpha2-client-declaration-build-order.md",
-    "../logs/2026-09-06-installation-maintenance-map.md"
+    "../logs/2026-09-06-installation-maintenance-map.md",
+    "../logs/2026-09-07-workspace-standardization.md"
   ],
   "protocol": {
     "id": "meta-intent",

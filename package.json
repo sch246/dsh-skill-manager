@@ -1,0 +1,19 @@
+{
+  "name": "dsh-skill-manager-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.17.1",
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build.mjs build",
+    "typecheck": "node scripts/build.mjs typecheck",
+    "setup": "node scripts/plugin.mjs setup",
+    "inspect": "node scripts/plugin.mjs inspect",
+    "remove": "node scripts/plugin.mjs remove"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "tsdown": "0.22.14",
+    "tsx": "4.22.4"
+  }
+}
