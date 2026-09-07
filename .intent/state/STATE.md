@@ -78,3 +78,5 @@ Build and typecheck establish mechanical completeness; evaluate the deployed beh
 - A general Skill registry redesign, generic package manager, or package-specific Remote registry parallel to the Host's generic Client Remote capability.
 - Preserving the five extracted commits on an active Harness branch or treating their exact implementation as current intent.
 - Owning generated catalogs or unrelated sidebar, preset, warm-minimal, settings, documentation, or workspace changes.
+
+Default inspection compares the selected profile dependency with its exact root lock importer, checks the installed package realpath and identity and the Bundle count, and reports any patch receipt summary. Installation consistency and matching this candidate package path are separate observations. Missing target variables report not-inspected; the lock reader uses the selected checkout CLI's installed js-yaml dependency.
